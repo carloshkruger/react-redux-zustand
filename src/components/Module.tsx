@@ -1,8 +1,9 @@
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { ChevronDown } from "lucide-react";
 import { Lesson } from "./Lesson";
-import { useAppDispatch, useAppSelector } from "../store";
-import { play } from "../store/slices/player";
+import { useStore } from "../zustand-store";
+// import { useAppDispatch, useAppSelector } from "../store";
+// import { play } from "../store/slices/player";
 
 interface ModuleProps {
   moduleIndex: number;
@@ -11,29 +12,44 @@ interface ModuleProps {
 }
 
 export function Module({ title, amountOfLessons, moduleIndex }: ModuleProps) {
-  const { lessons, currentModuleIndex, currentLessonIndex } = useAppSelector(
+  const { currentModuleIndex, currentLessonIndex, lessons, play } = useStore(
     (state) => {
-      const lessons = state.player.course?.modules[moduleIndex].lessons;
-      const currentModuleIndex = state.player.currentModuleIndex;
-      const currentLessonIndex = state.player.currentLessonIndex;
-
       return {
-        lessons,
-        currentModuleIndex,
-        currentLessonIndex,
+        currentModuleIndex: state.currentModuleIndex,
+        currentLessonIndex: state.currentLessonIndex,
+        lessons: state.course?.modules[moduleIndex].lessons,
+        play: state.play,
       };
     }
   );
-  const dispatch = useAppDispatch();
 
   function handlePlayLesson(lessonIndex: number) {
-    dispatch(
-      play({
-        moduleIndex,
-        lessonIndex,
-      })
-    );
+    play({ moduleIndex, lessonIndex });
   }
+
+  // const { lessons, currentModuleIndex, currentLessonIndex } = useAppSelector(
+  //   (state) => {
+  //     const lessons = state.player.course?.modules[moduleIndex].lessons;
+  //     const currentModuleIndex = state.player.currentModuleIndex;
+  //     const currentLessonIndex = state.player.currentLessonIndex;
+
+  //     return {
+  //       lessons,
+  //       currentModuleIndex,
+  //       currentLessonIndex,
+  //     };
+  //   }
+  // );
+  // const dispatch = useAppDispatch();
+
+  // function handlePlayLesson(lessonIndex: number) {
+  //   dispatch(
+  //     play({
+  //       moduleIndex,
+  //       lessonIndex,
+  //     })
+  //   );
+  // }
 
   return (
     <Collapsible.Root className="group" defaultOpen={moduleIndex === 0}>
